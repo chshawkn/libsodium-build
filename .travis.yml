@@ -77,8 +77,8 @@ osx_image: xcode8.3
 
 script:
 - echo script
-- (build.sh)
-- pwd
+- (./build.sh)
+- echo $(pwd)
 - export PATH="$PATH:$HOME/.cargo/bin"
 #- cargo build --target=arm-linux-androideabi
 
