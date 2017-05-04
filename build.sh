@@ -4,13 +4,22 @@ set -e
 
 source common.sh
 
+function package() {
+    local target_dir="${1}"
+    local lib_name="${2}"
+    local artifact_dirs=($(find ${target_dir} -mindepth 1 -maxdepth 1 -type d | awk -F "${target_dir}/" '{print $2}' | grep "${lib_name}-"))
+    for artifact_dir in "${artifact_dirs[@]}"; do
+        echo "package: ${artifact_dir} into ${artifact_dir}.tar.gz"
+        tar czf "${artifact_dir}.tar.gz" "${artifact_dir}"
+    done
+}
+
 mkdir -p target
 [ -f "target/${ARCHIVE}" ] || aria2c --file-allocation=none -c -x 10 -s 10 -m 0 --console-log-level=notice --log-level=notice --summary-interval=0 -d "$(pwd)/target" -o "${ARCHIVE}" "${ARCHIVE_URL}"
 
 # Install gcc-6.3.0_1.sierra
 #brew install gcc
 brew install libtool autoconf automake
-
 
 # build-libsodium-darwin.sh
 if [ -z "${AND_ARCHS}" ] && [ -z "${IOS_ARCHS}" ]; then
@@ -75,7 +84,7 @@ do
     fi
     (./autogen.sh)
     echo "./dist-build/android-${SCRIPT_SUFFIX}.sh"
-    (./dist-build/android-${SCRIPT_SUFFIX}.sh)
+    (./dist-build/android-${SCRIPT_SUFFIX}.sh | ${FILTER})
     cd ../
     rm -rf ${LIB_NAME}-${RUST_AND_ARCH}
     mkdir -p ${LIB_NAME}-${RUST_AND_ARCH}
@@ -84,3 +93,5 @@ do
 done
 
 source build-libsodium-ios.sh
+
+(cd target; package "." "${LIB_NAME}"; ls -l .;)

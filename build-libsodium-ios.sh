@@ -74,18 +74,19 @@ function  configure_make() {
 
     rm -rf "target/${LIB_NAME}"
     mkdir -p "target/${LIB_NAME}"
-    echo $(pwd)
     tar xzf "target/${ARCHIVE}" --strip-components=1 -C "target/${LIB_NAME}"
 
     cd "target/${LIB_NAME}"
-    make distclean > /dev/null
+    echo $(pwd)
+
+    make distclean > /dev/null || echo No rule to make target
 
     ./configure --host=${CONFIGURE_HOST} \
         --disable-shared \
         --enable-minimal \
-        --prefix="${PREFIX}" || exit 1
+        --prefix="${PREFIX}" | ${FILTER} || exit 1
 
-    make -j3 install || exit 1
+    make -j3 install | ${FILTER} || exit 1
     cd ../../
 }
 
@@ -119,5 +120,5 @@ if [[ $# -eq 0 && ${#IOS_ARCHS_ARRAY[@]} -eq 5 ]]; then
 
     # Cleanup
     rm -rf -- "${PREFIX}/tmp"
-    make distclean > /dev/null
+    make distclean > /dev/null || echo No rule to make target
 fi
