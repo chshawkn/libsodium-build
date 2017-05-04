@@ -111,7 +111,7 @@ if [[ $# -eq 0 && ${#IOS_ARCHS_ARRAY[@]} -eq 5 ]]; then
       "$(pwd)/target/${LIB_NAME}-i386-apple-ios/lib/libsodium.a" \
       "$(pwd)/target/${LIB_NAME}-x86_64-apple-ios/lib/libsodium.a" \
       -output "${PREFIX}/lib/libsodium.a"
-    mv -f -- "$(pwd)/target/${LIB_NAME}-armv7-apple-ios/include" "${PREFIX}/"
+    cp -r -- "$(pwd)/target/${LIB_NAME}-armv7-apple-ios/include" "${PREFIX}/"
 
     echo
     echo "libsodium has been installed into ${PREFIX}"
