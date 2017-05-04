@@ -96,3 +96,5 @@ deploy:
     tags: true
 after_deploy:
 - echo "deploy $RELEASE_PKG_FILE done"
+
+compiler: clang
