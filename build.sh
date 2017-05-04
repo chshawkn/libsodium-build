@@ -35,6 +35,12 @@ if [ -z "${AND_ARCHS}" ] && [ -z "${IOS_ARCHS}" ]; then
     #tar czf "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "../target" "${LIB_NAME}-x86_64-apple-darwin"
 fi
 
+unset CXX
+unset CC
+#export CXX=clang++
+#export CC=clang
+ORIGINAL_PATH="${PATH}"
+
 AND_ARCHS_ARRAY=(${AND_ARCHS})
 for ((i=0; i < ${#AND_ARCHS_ARRAY[@]}; i++))
 do
@@ -82,9 +88,15 @@ do
     if [ -z "${ANDROID_NDK_HOME}" ]; then
         export ANDROID_NDK_HOME="/usr/local/opt/android-ndk/android-ndk-r14b"
     fi
+
+    export TOOLCHAIN_DIR="$(pwd)/android-toolchain-${TARGET_ARCH}"
+    export PATH="${TOOLCHAIN_DIR}/bin:${ORIGINAL_PATH}"
     (./autogen.sh)
     echo "./dist-build/android-${SCRIPT_SUFFIX}.sh"
     (./dist-build/android-${SCRIPT_SUFFIX}.sh | ${FILTER})
+    unset TOOLCHAIN_DIR
+    export PATH="${ORIGINAL_PATH}"
+
     cd ../
     rm -rf ${LIB_NAME}-${RUST_AND_ARCH}
     mkdir -p ${LIB_NAME}-${RUST_AND_ARCH}
