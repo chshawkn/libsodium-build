@@ -26,13 +26,13 @@ if [ -z "${AND_ARCHS}" ] && [ -z "${IOS_ARCHS}" ]; then
     brew tap chshawkn/homebrew-brew-tap
     brew install chshawkn/brew-tap/libsodium@1.0.12
 
-    if [ -d ../target/${LIB_NAME}-x86_64-apple-darwin ]; then rm -rf ../target/${LIB_NAME}-x86_64-apple-darwin; fi
-    mkdir -p ../target/${LIB_NAME}-x86_64-apple-darwin
-    cp -r /usr/local/Cellar/libsodium@1.0.12/1.0.12/* ../target/${LIB_NAME}-x86_64-apple-darwin/
+    if [ -d target/${LIB_NAME}-x86_64-apple-darwin ]; then rm -rf target/${LIB_NAME}-x86_64-apple-darwin; fi
+    mkdir -p target/${LIB_NAME}-x86_64-apple-darwin
+    cp -r /usr/local/Cellar/libsodium@1.0.12/1.0.12/* target/${LIB_NAME}-x86_64-apple-darwin/
 
-    rm -f "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz"
+    rm -f "target/${LIB_NAME}-x86_64-apple-darwin.tar.gz"
     # create archive by package function
-    tar czf "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "../target" "${LIB_NAME}-x86_64-apple-darwin"
+    tar czf "target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "target" "${LIB_NAME}-x86_64-apple-darwin"
 fi
 
 unset CXX
