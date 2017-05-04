@@ -93,7 +93,7 @@ do
     export PATH="${TOOLCHAIN_DIR}/bin:${ORIGINAL_PATH}"
     (./autogen.sh)
     echo "./dist-build/android-${SCRIPT_SUFFIX}.sh"
-    (./dist-build/android-${SCRIPT_SUFFIX}.sh | ${FILTER})
+    (./dist-build/android-${SCRIPT_SUFFIX}.sh | ${FILTER} || cat config.log)
     unset TOOLCHAIN_DIR
     export PATH="${ORIGINAL_PATH}"
 
