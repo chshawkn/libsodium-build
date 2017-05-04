@@ -2,22 +2,28 @@
 
 set -e
 
-: "${LIB_NAME:=libsodium-1.0.12}"
-LIB_VERSION="$(echo ${LIB_NAME} | awk -F- '{print $2}')"
-ARCHIVE="${LIB_NAME}.tar.gz"
-ARCHIVE_URL="https://github.com/jedisct1/libsodium/releases/download/${LIB_VERSION}/${ARCHIVE}"
+source common.sh
+
+mkdir -p target
+[ -f "target/${ARCHIVE}" ] || aria2c --file-allocation=none -c -x 10 -s 10 -m 0 --console-log-level=notice --log-level=notice --summary-interval=0 -d "$(pwd)/target" -o "${ARCHIVE}" "${ARCHIVE_URL}"
 
 # Install gcc-6.3.0_1.sierra
 #brew install gcc
 brew install libtool autoconf automake
 
-mkdir -p target
-[ -f "target/${ARCHIVE}" ] || aria2c --file-allocation=none -c -x 10 -s 10 -m 0 --console-log-level=notice --log-level=notice --summary-interval=0 -d "$(pwd)/target" -o "${ARCHIVE}" "${ARCHIVE_URL}"
 
-if [[ ! -v AND_ARCHS ]]; then
-    # mips32 is recognized as mips64
-    #: "${AND_ARCHS:=android android-armeabi android-mips android-x86 android64 android64-aarch64}"
-    : "${AND_ARCHS:=android android-armeabi android-x86 android64 android64-aarch64}"
+# build-libsodium-darwin.sh
+if [ -z "${AND_ARCHS}" ] && [ -z "${IOS_ARCHS}" ]; then
+    brew tap chshawkn/homebrew-brew-tap
+    brew install chshawkn/brew-tap/libsodium@1.0.12
+
+    if [ -d ../target/${LIB_NAME}-x86_64-apple-darwin ]; then rm -rf ../target/${LIB_NAME}-x86_64-apple-darwin; fi
+    mkdir -p ../target/${LIB_NAME}-x86_64-apple-darwin
+    cp -r /usr/local/Cellar/libsodium@1.0.12/1.0.12/* ../target/${LIB_NAME}-x86_64-apple-darwin/
+
+    rm -f "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz"
+    # create archive by package function
+    #tar czf "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "../target" "${LIB_NAME}-x86_64-apple-darwin"
 fi
 
 AND_ARCHS_ARRAY=(${AND_ARCHS})
@@ -67,12 +73,14 @@ do
     if [ -z "${ANDROID_NDK_HOME}" ]; then
         export ANDROID_NDK_HOME="/usr/local/opt/android-ndk/android-ndk-r14b"
     fi
-    ./autogen.sh
+    (./autogen.sh)
     echo "./dist-build/android-${SCRIPT_SUFFIX}.sh"
-    ./dist-build/android-${SCRIPT_SUFFIX}.sh
+    (./dist-build/android-${SCRIPT_SUFFIX}.sh)
     cd ../
     rm -rf ${LIB_NAME}-${RUST_AND_ARCH}
     mkdir -p ${LIB_NAME}-${RUST_AND_ARCH}
     cp -r ${LIB_NAME}/$(echo ${LIB_NAME} | awk -F- '{print $1}')-android-${TARGET_ARCH}/* ${LIB_NAME}-${RUST_AND_ARCH}/
     cd ../
 done
+
+source build-libsodium-ios.sh
