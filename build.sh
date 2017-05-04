@@ -32,7 +32,7 @@ if [ -z "${AND_ARCHS}" ] && [ -z "${IOS_ARCHS}" ]; then
 
     rm -f "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz"
     # create archive by package function
-    #tar czf "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "../target" "${LIB_NAME}-x86_64-apple-darwin"
+    tar czf "../target/${LIB_NAME}-x86_64-apple-darwin.tar.gz" -C "../target" "${LIB_NAME}-x86_64-apple-darwin"
 fi
 
 unset CXX
