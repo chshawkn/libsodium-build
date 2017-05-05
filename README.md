@@ -1,6 +1,6 @@
 # libsodium-build
 
-Build libsodium
+Build libsodium for android and ios.
 
     ./build.sh
 
